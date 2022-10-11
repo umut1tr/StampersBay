@@ -19,6 +19,8 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using StampersBay.Areas.Identity.Data;
+using StampersBay.Enums;
+
 
 namespace StampersBay.Areas.Identity.Pages.Account
 {
@@ -132,7 +134,7 @@ namespace StampersBay.Areas.Identity.Pages.Account
                 user.SecretToken = "TEST";
                 user.isStampedIn = false;
 
-
+                
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
                 var result = await _userManager.CreateAsync(user, Input.Password);
