@@ -27,18 +27,21 @@
         <div class="text-center">
             <h2>Eingestempelt: @user.isStampedIn</h2>
 
-            
-            @*<div class="alert alert-info">You sucesfully stamped*@
-                @if (user.isStampedIn != true)
-                {
-                    <a asp-controller="User" asp-action="Stamping"><button type="button" class="btn btn-success">Stamp IN</button></a>
 
+            
+                @if (user.isStampedIn != true)   
+                {
+
+                    <a asp-controller="User" asp-action="Stamping"><button type="button" class="btn btn-success">Stamp IN</button></a>  
+                    
                 }
                 else
                 {
                     <a asp-controller="User" asp-action="Stamping"><button type="button" class="btn btn-danger">Stamp OUT</button></a>
+                    
                 }
-            @*</div>*@
+            
+            
                   
             
         </div>

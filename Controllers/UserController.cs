@@ -27,7 +27,7 @@ namespace StampersBay.Controllers
         public IActionResult Index()
         {
 
-            return null;
+            return View();
         }
 
 
