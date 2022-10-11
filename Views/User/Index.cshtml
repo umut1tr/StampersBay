@@ -1,9 +1,11 @@
 ﻿@using Microsoft.AspNetCore.Identity
-@using StampersBay.Areas.Identity.Data
+@using StampersBay.Areas.Identity.Data;
+@using StampersBay.Models;
 
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
 
+@model StampersBay.Models.GenerateQRCodeModel
 
 
 @{
@@ -14,8 +16,9 @@
 @if (SignInManager.IsSignedIn(User))
 {
 
-    var user = await UserManager.GetUserAsync(User);
+    var user = await UserManager.GetUserAsync(User);        
 
+    
     <div class="text-center">
         <h2 class="display-4">@UserManager.GetUserName(User)!</h2>
         <hr>
@@ -27,22 +30,19 @@
         <div class="text-center">
             <h2>Eingestempelt: @user.isStampedIn</h2>
 
-
             
-                @if (user.isStampedIn != true)   
-                {
+            @if (user.isStampedIn != true)   
+            {
 
                     <a asp-controller="User" asp-action="Stamping"><button type="button" class="btn btn-success">Stamp IN</button></a>  
                     
-                }
-                else
-                {
-                    <a asp-controller="User" asp-action="Stamping"><button type="button" class="btn btn-danger">Stamp OUT</button></a>
+            }
+            else
+            {
+                <a asp-controller="User" asp-action="Stamping"><button type="button" class="btn btn-danger">Stamp OUT</button></a>
                     
-                }
-            
-            
-                  
+            }           
+                              
             
         </div>
     </div>
@@ -55,7 +55,3 @@ else
     </div>
 
 }
-
-
-
-
