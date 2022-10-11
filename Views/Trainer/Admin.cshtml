@@ -1,0 +1,49 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using StampersBay.Areas.Identity.Data
+
+@model IEnumerable<ApplicationUser>
+
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+
+@{
+    ViewData["Title"] = "Admin - Trainer";
+}
+
+@if (SignInManager.IsSignedIn(User))
+{
+    <div class="text-center">        
+        <h2 class="display-4"> Liste aller Studenten</h2>
+        <hr>
+    </div>
+
+    @foreach (var user in Model)
+    {
+        <div class="text_center" style="margin-top:30px">
+            <h1 class="text-center">@user.Email</h1>
+            <div class="text-center">
+                <h4>Vorname: @user.FirstName</h4>
+                <h4>Nachname: @user.LastName</h4>
+                <h4>Token: @user.SecretToken</h4>
+                <h4>Eingestempelt: @user.isStampedIn</h4>
+                <button type="button" class="btn btn-primary">Edit User</button>
+                <button type="button" class="btn btn-danger">Delete User</button>
+            </div>
+
+            <hr>
+        </div>
+
+    }
+}
+else
+{
+    <div class="text-center">
+        <h1 class="display-4">Du bist noch nicht eingeloggt. Bitte logge dich ein!</h1>
+    </div>
+
+}
+
+
+
+

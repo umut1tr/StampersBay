@@ -1,0 +1,47 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using StampersBay.Areas.Identity.Data
+
+@model IEnumerable<ApplicationUser>
+
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+
+@{
+    ViewData["Title"] = "Stamp In";
+}
+
+@if (SignInManager.IsSignedIn(User)){
+    <div class="text-center">        
+        <h2 class="display-4">@UserManager.GetUserName(User)!</h2>        
+        <hr>
+    </div>
+               
+
+    @foreach(var user in Model){
+        
+        if(user.Email == UserManager.GetUserName(User)){
+            <div class="text_center">
+                <h1 class="text-center">@user.Email</h1>
+                <div class="text-center">                    
+                    <h2>Eingestempelt: @user.isStampedIn</h2>
+                    <button type="button" class="btn btn-success">Stamp IN</button>
+                    <button type="button" class="btn btn-danger">Stamp OUT</button>
+                </div>
+                <hr>
+            </div>
+        }
+        
+        
+    }
+}
+else{
+    <div class="text-center">
+        <h1 class="display-4">Du bist noch nicht eingeloggt. Bitte logge dich ein!</h1>
+    </div>
+    
+}
+
+
+
+
