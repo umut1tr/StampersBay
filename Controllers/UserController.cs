@@ -12,19 +12,19 @@ namespace StampersBay.Controllers
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ILogger<UserController> _logger;
+        private readonly SignInManager<ApplicationUser> _signInManager;
 
-        public UserController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, ILogger<UserController> logger)
+        public UserController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, ILogger<UserController> logger, SignInManager<ApplicationUser> signInManager)
         {
             _context = context;
             _userManager = userManager;
             _logger = logger;
+            _signInManager = signInManager;
         }
 
-        public IActionResult Index()
-        {
-            var users = _userManager.Users;
+        public IActionResult Index(){           
 
-            return View(users);
+            return View();
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
