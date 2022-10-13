@@ -5,12 +5,13 @@
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
 
-@model StampersBay.Models.GenerateQRCodeModel
+
 
 
 
 @{
     ViewData["Title"] = "Students Hub";
+    var qRCodeString = ViewBag.QrCodeString;
 }
 
 
@@ -18,12 +19,7 @@
 {
 
     var user = await UserManager.GetUserAsync(User);        
-
-    
-    <div class="text-center">
-        <h2 class="display-4">@UserManager.GetUserName(User)!</h2>
-        <hr>
-    </div>
+   
 
     <div class="text_center">
 
@@ -31,22 +27,30 @@
         <hr>
         <div class="text-center">
             <h2>
-                Eingestempelt: 
-                @if (user.isStampedIn != true)
-                {
-                    <button type="button" class="btn btn-danger">NO</button>                    
+                Stamped IN/OUT?:
+                <div class="text-center">
+                    @if (user.isStampedIn != true)
+                    {
+                        <button type="button" class="btn btn-danger">OUT</button>
 
-                }
-                else
-                {
-                    <button type="button" class="btn btn-success">YES</button>                  
+                    }
+                    else
+                    {
+                        <button type="button" class="btn btn-success">IN</button>
 
-                }
-            </h2>
+                    }
+                </div>
+                
+            </h2>            
 
-            <h2>SECRET QR CODE:
-                <div class="text-center">@user.SecretToken</div>
-            </h2>
+            <div class="text-center">
+                <form asp-controller="User" asp-action="Index">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    @Html.Raw(qRCodeString)
+                </form>
+            </div>
+            
+
             @if (user.isStampedIn != true)   
             {               
                 <a asp-controller="User" asp-action="Stamping"><button type="button" class="btn btn-success">Stamp IN</button></a> 
@@ -55,36 +59,12 @@
             else
             {
                 <a asp-controller="User" asp-action="Stamping"><button type="button" class="btn btn-danger">Stamp OUT</button></a>                    
-            }           
+            }          
                               
             
         </div>
     </div>
-
-    <hr />
-
-
-    <div class="text-center">TESTING QR CODE VIEW
-        <h1>CreateQRCode</h1>
-        <div class="row">
-            <div class="col-md-4">
-                <form asp-controller="User" asp-action="CreateQRCode">
-                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                    <div class="form-group">
-                        <label asp-for="QRCodeText" class="control-label"></label>
-                        <input asp-for="QRCodeText" class="form-control" />
-                        <span asp-validation-for="QRCodeText" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <input type="submit" value="Generate QR Code" class="btn btn-primary" />
-                    </div>
-                    <div class="form-group">
-                        <img src="@ViewBag.QrCodeUri" class="img-thumbnail" />
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
+          
 
 }
 else
@@ -93,4 +73,9 @@ else
         <h1 class="display-4">Du bist noch nicht eingeloggt. Bitte logge dich ein!</h1>
     </div>
 
+}
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

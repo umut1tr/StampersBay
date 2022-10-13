@@ -41,6 +41,10 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=User}/{action=Index}");
 
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=User}/{action=StampInOrOut}/{userName?}");
+
 // adds Mapping to Pages via Razor Engine
 app.MapRazorPages();
 

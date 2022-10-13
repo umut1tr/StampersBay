@@ -28,10 +28,12 @@ namespace StampersBay.Controllers
             _environment = environment;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
+            ViewBag.QrCodeString = await CreateQrCodeStringAsync();
 
             return View();
+
         }
 
 
@@ -40,6 +42,8 @@ namespace StampersBay.Controllers
         {            
 
             var user = await _userManager.GetUserAsync(User);
+
+            ViewBag.QrCodeString = await CreateQrCodeStringAsync();
 
             if (user.isStampedIn != true)
             {
@@ -59,44 +63,100 @@ namespace StampersBay.Controllers
                 await _context.SaveChangesAsync();
                 return View("Index");
             }
-
-        }
-
-        public IActionResult CreateQRCodeAsync()
-        {
-            return View("Index");
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> CreateQRCode(GenerateQRCodeModel generateQRCode)        {
             
+        }
+
+
+        public async Task<IActionResult> StampInOrOutAsync(string userName)
+        {
+
             var user = await _userManager.GetUserAsync(User);
+            ViewBag.QrCodeString = await CreateQrCodeStringAsync();
 
-            try
+            if (!userName.Equals(user.UserName))
             {
-                generateQRCode.QRCodeText = user.SecretToken;
-                GeneratedBarcode barcode = QRCodeWriter.CreateQrCode(generateQRCode.QRCodeText, 200);
-                barcode.AddBarcodeValueTextBelowBarcode();
+                return View("Index");
 
-                // Styling a QR code and adding annotation text
-                barcode.SetMargins(10);
-                barcode.ChangeBarCodeColor(Color.BlueViolet);
-                string path = Path.Combine(_environment.WebRootPath, "GeneratedQRCode");
-                if (!Directory.Exists(path))
+            }
+            else
+            {
+                if (!user.isStampedIn)
                 {
-                    Directory.CreateDirectory(path);
+                    user.isStampedIn = true;
+
+                    await _userManager.UpdateAsync(user);
+                    await _context.SaveChangesAsync();
+
+                    return View("Index");
                 }
-                string filePath = Path.Combine(_environment.WebRootPath, $"GeneratedQRCode/{user.SecretToken}.png");
-                barcode.SaveAsPng(filePath);
-                string fileName = Path.GetFileName(filePath);
-                string imageUrl = $"{this.Request.Scheme}://{this.Request.Host}{this.Request.PathBase}" + "/GeneratedQRCode/" + fileName;
-                ViewBag.QrCodeUri = imageUrl;
+                else
+                {
+                    user.isStampedIn = false;
+
+                    await _userManager.UpdateAsync(user);
+                    await _context.SaveChangesAsync();
+
+                    return View("Index");
+
+                }
             }
-            catch (Exception)
+
+            //if (userName == user.UserName)
+            //{
+            //    if (user.isStampedIn != true)
+            //    {
+            //        user.isStampedIn = true;
+
+            //        await _userManager.UpdateAsync(user);
+            //        await _context.SaveChangesAsync();
+
+            //        return View("Index");
+            //    }
+            //    else
+            //    {
+            //        user.isStampedIn = false;
+
+            //        await _userManager.UpdateAsync(user);
+            //        await _context.SaveChangesAsync();
+
+            //        return View("Index");
+            //    }
+            //}
+
+           
+
+            return View();
+
+        }
+
+        private async Task<string> CreateQrCodeStringAsync()
+        {
+            string QrCodeString = "";
+
+            if (_signInManager.IsSignedIn(User))
             {
-                throw;
+                var user = await _userManager.GetUserAsync(User);
+                
+
+
+                try
+                {
+                    GeneratedBarcode barcode = QRCodeWriter.CreateQrCode($"{this.Request.Scheme}://{this.Request.Host}{this.Request.PathBase}/Stamp/StampInOrOut/{user.Email}", 200);
+                    barcode.AddBarcodeValueTextBelowBarcode();
+
+                    // Styling a QR code and adding annotation text
+                    barcode.SetMargins(10);
+                    barcode.ChangeBarCodeColor(Color.BlueViolet);
+                    QrCodeString = barcode.ToHtmlTag();
+
+                }
+                catch (Exception)
+                {
+                    throw;
+                }
             }
-            return View("Index");
+
+            return QrCodeString;
         }
 
 
