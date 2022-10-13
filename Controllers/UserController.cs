@@ -37,8 +37,7 @@ namespace StampersBay.Controllers
 
         // Stamp user in called from button from User/Index
         public async Task<IActionResult> Stamping()
-        {
-            
+        {            
 
             var user = await _userManager.GetUserAsync(User);
 
@@ -63,12 +62,44 @@ namespace StampersBay.Controllers
 
         }
 
-        public IActionResult CreateQRCode()
+        public IActionResult CreateQRCodeAsync()
         {
-            return View();
+            return View("Index");
         }
 
-        
+        [HttpPost]
+        public async Task<IActionResult> CreateQRCode(GenerateQRCodeModel generateQRCode)        {
+            
+            var user = await _userManager.GetUserAsync(User);
+
+            try
+            {
+                generateQRCode.QRCodeText = user.SecretToken;
+                GeneratedBarcode barcode = QRCodeWriter.CreateQrCode(generateQRCode.QRCodeText, 200);
+                barcode.AddBarcodeValueTextBelowBarcode();
+
+                // Styling a QR code and adding annotation text
+                barcode.SetMargins(10);
+                barcode.ChangeBarCodeColor(Color.BlueViolet);
+                string path = Path.Combine(_environment.WebRootPath, "GeneratedQRCode");
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
+                string filePath = Path.Combine(_environment.WebRootPath, $"GeneratedQRCode/{user.SecretToken}.png");
+                barcode.SaveAsPng(filePath);
+                string fileName = Path.GetFileName(filePath);
+                string imageUrl = $"{this.Request.Scheme}://{this.Request.Host}{this.Request.PathBase}" + "/GeneratedQRCode/" + fileName;
+                ViewBag.QrCodeUri = imageUrl;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            return View("Index");
+        }
+
+
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

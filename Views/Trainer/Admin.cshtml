@@ -26,7 +26,15 @@
                 <h4>Vorname: @user.FirstName</h4>
                 <h4>Nachname: @user.LastName</h4>
                 <h4>Token: @user.SecretToken</h4>
-                <h4>Eingestempelt: @user.isStampedIn</h4>
+                <h4>Eingestempelt:
+                    @if(user.isStampedIn != true){
+                        <button type="button" class="btn btn-success">YES</button>
+                    }
+                    else
+                    {
+                        <button type="button" class="btn btn-danger">NO</button>
+                    }                    
+                </h4>
                 <button type="button" class="btn btn-primary">Edit User</button>
                 <button type="button" class="btn btn-danger">Delete User</button>
             </div>

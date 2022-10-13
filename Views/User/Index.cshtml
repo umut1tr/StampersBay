@@ -8,6 +8,7 @@
 @model StampersBay.Models.GenerateQRCodeModel
 
 
+
 @{
     ViewData["Title"] = "Students Hub";
 }
@@ -27,23 +28,61 @@
     <div class="text_center">
 
         <h1 class="text-center">@user.Email</h1>
+        <hr>
         <div class="text-center">
-            <h2>Eingestempelt: @user.isStampedIn</h2>
+            <h2>
+                Eingestempelt: 
+                @if (user.isStampedIn != true)
+                {
+                    <button type="button" class="btn btn-danger">NO</button>                    
 
-            
+                }
+                else
+                {
+                    <button type="button" class="btn btn-success">YES</button>                  
+
+                }
+            </h2>
+
+            <h2>SECRET QR CODE:
+                <div class="text-center">@user.SecretToken</div>
+            </h2>
             @if (user.isStampedIn != true)   
-            {
-
-                    <a asp-controller="User" asp-action="Stamping"><button type="button" class="btn btn-success">Stamp IN</button></a>  
+            {               
+                <a asp-controller="User" asp-action="Stamping"><button type="button" class="btn btn-success">Stamp IN</button></a> 
                     
             }
             else
             {
-                <a asp-controller="User" asp-action="Stamping"><button type="button" class="btn btn-danger">Stamp OUT</button></a>
-                    
+                <a asp-controller="User" asp-action="Stamping"><button type="button" class="btn btn-danger">Stamp OUT</button></a>                    
             }           
                               
             
+        </div>
+    </div>
+
+    <hr />
+
+
+    <div class="text-center">TESTING QR CODE VIEW
+        <h1>CreateQRCode</h1>
+        <div class="row">
+            <div class="col-md-4">
+                <form asp-controller="User" asp-action="CreateQRCode">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="form-group">
+                        <label asp-for="QRCodeText" class="control-label"></label>
+                        <input asp-for="QRCodeText" class="form-control" />
+                        <span asp-validation-for="QRCodeText" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" value="Generate QR Code" class="btn btn-primary" />
+                    </div>
+                    <div class="form-group">
+                        <img src="@ViewBag.QrCodeUri" class="img-thumbnail" />
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 
