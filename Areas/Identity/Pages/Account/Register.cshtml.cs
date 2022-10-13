@@ -32,6 +32,7 @@ namespace StampersBay.Areas.Identity.Pages.Account
         private readonly IUserEmailStore<ApplicationUser> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
         public RegisterModel(
             UserManager<ApplicationUser> userManager,
@@ -129,14 +130,15 @@ namespace StampersBay.Areas.Identity.Pages.Account
             {
                 var user = CreateUser();
 
+
                 user.FirstName = Input.FirstName;
                 user.LastName = Input.LastName;
                 user.SecretToken = "TEST";
                 user.isStampedIn = false;
-
                 
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
-                await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
+                await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);                
+
                 var result = await _userManager.CreateAsync(user, Input.Password);
 
                 if (result.Succeeded)
